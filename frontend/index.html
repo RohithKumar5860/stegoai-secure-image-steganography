@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>StegoAI – Secure Image Steganography</title>
+<meta name="description" content="AI-powered steganography using TA-DPCNN. Hide encrypted messages inside images with adaptive embedding."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ──── NAVBAR ──── -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="brand-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="2"/></svg></div>
+      <span>StegoAI</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-btn active" data-tab="encode">Encode</button>
+      <button class="nav-btn" data-tab="decode">Decode</button>
+      <button class="nav-btn" data-tab="verify">Verify</button>
+      <button class="nav-btn" data-tab="keys">Keys</button>
+      <button class="nav-btn" data-tab="logs">Logs</button>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ──── HERO ──── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <h1 class="hero-title">AI-Powered Steganography</h1>
+  <p class="hero-sub">Hide encrypted messages in images using the Texture-Aware Dual-Path CNN (TA-DPCNN). AES-256 + RSA-2048 encryption, adaptive embedding, SHA-256 verification.</p>
+  <div class="hero-badges">
+    <span class="badge">TA-DPCNN</span>
+    <span class="badge">AES-256</span>
+    <span class="badge">RSA-2048</span>
+    <span class="badge">Reed-Solomon ECC</span>
+    <span class="badge">HMAC Verification</span>
+  </div>
+</section>
+
+<!-- ──── MAIN CONTENT ──── -->
+<main class="container">
+
+  <!-- ════ ENCODE TAB ════ -->
+  <section class="tab-panel active" id="tab-encode">
+    <div class="panel-grid">
+
+      <!-- Left column -->
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17l3-3 3 3M12 14V7"/></svg>
+            <h2>Upload Cover Image</h2>
+          </div>
+          <div class="dropzone" id="encodeDropzone">
+            <div class="drop-content">
+              <div class="drop-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <p class="drop-primary">Drag & drop or <span class="drop-link">browse</span></p>
+              <p class="drop-secondary">PNG, JPG, BMP · Max 20 MB</p>
+            </div>
+            <input type="file" id="encodeImageInput" accept="image/*" hidden/>
+          </div>
+          <div class="image-preview-wrap" id="encodePreviewWrap" style="display:none">
+            <img id="encodePreview" class="img-preview" alt="Cover image preview"/>
+            <button class="btn-ghost btn-sm clear-btn" id="encodeClear">✕ Clear</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <h2>Secret Message</h2>
+          </div>
+          <div class="textarea-wrap">
+            <textarea id="encodeMessage" class="textarea" placeholder="Enter your secret message here…" maxlength="10000" rows="6"></textarea>
+            <div class="char-counter"><span id="encodeCharCount">0</span> / 10 000</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <h2>RSA Public Key <span class="badge-sm">optional</span></h2>
+          </div>
+          <textarea id="encodePubKey" class="textarea mono" placeholder="Paste PEM public key (leave blank to auto-generate)" rows="4"></textarea>
+          <p class="hint">If left blank, a fresh RSA-2048 key pair is generated. Save the returned private key to decode later.</p>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-full" id="encodeBtn">
+          <span class="btn-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Encode &amp; Embed
+          </span>
+          <span class="btn-spinner" hidden></span>
+        </button>
+      </div>
+
+      <!-- Right column – Results -->
+      <div class="col" id="encodeResultCol" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <h2>Encoding Result</h2>
+          </div>
+
+          <!-- Image comparison -->
+          <div class="img-compare">
+            <div class="img-compare-item">
+              <p class="img-label">Original</p>
+              <img id="resultOriginal" class="img-result" alt="Original"/>
+            </div>
+            <div class="img-compare-divider">→</div>
+            <div class="img-compare-item">
+              <p class="img-label">Stego Image</p>
+              <img id="resultStego" class="img-result" alt="Stego"/>
+              <a class="btn btn-ghost btn-sm download-btn" id="downloadStego">↓ Download</a>
+            </div>
+          </div>
+
+          <!-- Metrics -->
+          <div class="metrics-grid" id="metricsGrid"></div>
+
+          <!-- Integrity info -->
+          <div class="info-block" id="encodeIntegrityBlock"></div>
+
+          <!-- Private key box (if generated) -->
+          <div class="key-output-box" id="privateKeyBox" style="display:none">
+            <div class="key-header">
+              <span>🔑 Your Private Key — save this now!</span>
+              <button class="btn-ghost btn-sm" id="copyPrivKey">Copy</button>
+            </div>
+            <pre id="privateKeyText" class="key-pre"></pre>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-grid -->
+  </section>
+
+  <!-- ════ DECODE TAB ════ -->
+  <section class="tab-panel" id="tab-decode">
+    <div class="card card-centered">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <h2>Decode Stego Image</h2>
+      </div>
+
+      <div class="dropzone" id="decodeDropzone">
+        <div class="drop-content">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <p class="drop-primary">Upload stego image</p>
+        </div>
+        <input type="file" id="decodeImageInput" accept="image/*" hidden/>
+      </div>
+      <div class="image-preview-wrap" id="decodePreviewWrap" style="display:none">
+        <img id="decodePreview" class="img-preview" alt="Stego image"/>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">RSA Private Key (PEM)</label>
+        <textarea id="decodePrivKey" class="textarea mono" placeholder="Paste your RSA private key PEM here" rows="5"></textarea>
+      </div>
+
+      <button class="btn btn-primary btn-lg w-full" id="decodeBtn">
+        <span class="btn-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5"/></svg>
+          Decode Message
+        </span>
+        <span class="btn-spinner" hidden></span>
+      </button>
+
+      <div class="result-panel" id="decodeResult" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- ════ VERIFY TAB ════ -->
+  <section class="tab-panel" id="tab-verify">
+    <div class="card card-centered">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        <h2>Verify Image Integrity</h2>
+      </div>
+      <p class="hint center">Upload a stego image to verify its SHA-256 hash and HMAC. No private key required.</p>
+
+      <div class="dropzone" id="verifyDropzone">
+        <div class="drop-content">
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <p class="drop-primary">Upload stego image to verify</p>
+        </div>
+        <input type="file" id="verifyImageInput" accept="image/*" hidden/>
+      </div>
+      <div class="image-preview-wrap" id="verifyPreviewWrap" style="display:none">
+        <img id="verifyPreview" class="img-preview" alt="Verify image"/>
+      </div>
+
+      <button class="btn btn-primary btn-lg w-full" id="verifyBtn" style="margin-top:1.25rem">
+        <span class="btn-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Verify Integrity
+        </span>
+        <span class="btn-spinner" hidden></span>
+      </button>
+
+      <div class="result-panel" id="verifyResult" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- ════ KEYS TAB ════ -->
+  <section class="tab-panel" id="tab-keys">
+    <div class="card card-centered">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5"/></svg>
+        <h2>Generate RSA-2048 Key Pair</h2>
+      </div>
+      <p class="hint center">Generate a fresh RSA-2048 key pair for encryption. Store the private key securely — it is needed to decode messages.</p>
+      <div class="field-group">
+        <label class="field-label">Label (optional)</label>
+        <input type="text" id="keyLabel" class="input" placeholder="e.g. my-stego-key"/>
+      </div>
+      <button class="btn btn-primary btn-lg w-full" id="genKeyBtn">
+        <span class="btn-label">Generate Key Pair</span>
+        <span class="btn-spinner" hidden></span>
+      </button>
+      <div id="keyResult" style="display:none">
+        <div class="key-output-box" style="margin-top:1.5rem">
+          <div class="key-header"><span>Public Key</span><button class="btn-ghost btn-sm" id="copyPub">Copy</button></div>
+          <pre id="pubKeyOut" class="key-pre"></pre>
+        </div>
+        <div class="key-output-box">
+          <div class="key-header"><span>Private Key ⚠️ Keep secret</span><button class="btn-ghost btn-sm" id="copyPriv">Copy</button></div>
+          <pre id="privKeyOut" class="key-pre"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ LOGS TAB ════ -->
+  <section class="tab-panel" id="tab-logs">
+    <div class="card">
+      <div class="card-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <h2>Operation Logs</h2>
+        <button class="btn btn-ghost btn-sm ml-auto" id="refreshLogs">↺ Refresh</button>
+      </div>
+      <div id="logsContent"><p class="hint center">Click Refresh to load logs.</p></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ──── TOAST ──── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ──── LOADING OVERLAY ──── -->
+<div class="overlay" id="overlay" style="display:none">
+  <div class="overlay-box">
+    <div class="spinner"></div>
+    <p id="overlayText">Processing…</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

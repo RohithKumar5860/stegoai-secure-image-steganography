@@ -1,0 +1,25 @@
+# ─────────────────────────────────────────────────────────────
+# StegoAI – Python dependencies
+# Install with:  pip install -r requirements.txt
+# Note: torch / torchvision are large; install separately if needed.
+# ─────────────────────────────────────────────────────────────
+
+# Web framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# AI / ML (optional – system works without a trained checkpoint)
+# torch>=2.0.0
+# torchvision>=0.15.0
+
+# Image processing
+numpy>=1.24.0
+Pillow>=10.0.0
+opencv-python>=4.8.0        # optional – PIL is used as fallback
+scikit-image>=0.21.0
+
+# Cryptography
+cryptography>=41.0.0
+
+# Error correction
+reedsolo>=1.7.0
