@@ -30,7 +30,8 @@ AES-256 · RSA-2048 · TA-DPCNN · Reed-Solomon ECC · SHA-256 / HMAC
 11. [AI Model Training](#-ai-model-training)
 12. [Future Improvements](#-future-improvements)
 13. [Issues Fixed (Changelog)](#-issues-fixed-changelog)
-14. [License](#-license)
+14. [Contributing](#-contributing)
+15. [License](#-license)
 
 ---
 
@@ -598,6 +599,12 @@ Checkpoints are saved to `ai_model/checkpoints/best_tadpcnn.pth`.
 | *(Upload stego, verify integrity instantly)* | *(View encode/decode operation history)* |
 
 > Run the app and navigate to `http://localhost:5000` to see the live UI.
+
+---
+
+## 🤝 Contributing
+
+Open source contributors are welcome to contribute to this project! We appreciate your help in making this tool better. Please feel free to fork the repository, make your changes, and submit a pull request.
 
 ---
 
